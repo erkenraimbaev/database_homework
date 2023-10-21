@@ -12,7 +12,7 @@ class HHSearchClass:
     def __str__(self):
         pass
 
-    def get_employer_data(self):
+    def get_employer_data(self) -> list:
         """
         Функция для получения данных о работодателе
         """
@@ -33,19 +33,22 @@ class HHSearchClass:
         data_employers.append(filtered_employer)
         return data_employers
 
-    def get_vacancies_from_employer(self):
+    def get_vacancies_from_employer(self) -> list:
         """Функция для получения вакансий компании"""
+        url = 'https://api.hh.ru/vacancies?employer_id='
         params = {'per_page': 30}
-        data_vacancies = json.loads(requests.get('https://api.hh.ru/vacancies?employer_id=' + str(self.employer_id),
+        data_vacancies = json.loads(requests.get(url + str(self.employer_id),
                                                  params).content.decode())['items']
         data_vacancies_filtered = []
         for vacancy in data_vacancies:
-            employer = vacancy.get('employer').get('name')
+            employer_name = vacancy.get('employer').get('name')
             name_vacancy = vacancy.get('name')
             url_vacancy = vacancy.get('alternate_url')
             salary_vacancy = vacancy.get("salary")
+            if salary_vacancy is None:
+                salary_vacancy = 0
             experience_vacancy = vacancy.get('experience').get('name')
-            filtered_vacancy = {'employer': employer,
+            filtered_vacancy = {'employer': employer_name,
                                 'name': name_vacancy,
                                 'url': url_vacancy,
                                 'salary': salary_vacancy,
