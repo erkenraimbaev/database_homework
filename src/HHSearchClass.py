@@ -19,12 +19,14 @@ class HHSearchClass:
         data_employers = []
         url = "https://api.hh.ru/employers/"
         response = json.loads(requests.get(url + str(self.employer_id)).content.decode())
+        emp_id = response.get('id'),
         employer_name = response.get("name")
         description = response.get("description")
         employer_area = response.get("area").get("name")
         vacancy_count = response.get("open_vacancies")
         site_url = response.get("site_url")
-        filtered_employer = {'name': employer_name,
+        filtered_employer = {'employer_id': emp_id,
+                             'name': employer_name,
                              'description': description,
                              'area': employer_area,
                              'vacancy_count': vacancy_count,
@@ -41,6 +43,7 @@ class HHSearchClass:
                                                  params).content.decode())['items']
         data_vacancies_filtered = []
         for vacancy in data_vacancies:
+            vacancy_id = vacancy.get('id')
             employer_name = vacancy.get('employer').get('name')
             name_vacancy = vacancy.get('name')
             url_vacancy = vacancy.get('alternate_url')
@@ -48,7 +51,8 @@ class HHSearchClass:
             if salary_vacancy is None:
                 salary_vacancy = 0
             experience_vacancy = vacancy.get('experience').get('name')
-            filtered_vacancy = {'employer': employer_name,
+            filtered_vacancy = {'id': vacancy_id,
+                                'employer': employer_name,
                                 'name': name_vacancy,
                                 'url': url_vacancy,
                                 'salary': salary_vacancy,

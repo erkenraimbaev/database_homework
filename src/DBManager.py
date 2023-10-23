@@ -37,6 +37,7 @@ class DBManager:
         self.conn.autocommit = True
         # self.cur.execute(f"DROP DATABASE employers")
         self.cur.execute("""CREATE TABLE IF NOT EXISTS employers (
+                                        employer_id INTEGER,
                                         employer VARCHAR(255) PRIMARY KEY NOT NULL,
                                         description TEXT,
                                         employer_area VARCHAR(255),
@@ -46,7 +47,8 @@ class DBManager:
                                         """)
 
         self.cur.execute("""CREATE TABLE IF NOT EXISTS vacancies
-                                         (employer VARCHAR(255)  PRIMARY KEY NOT NULL,
+                                         (vacancy_id INTEGER PRIMARY KEY,
+                                         employer VARCHAR(255) NOT NULL,
                                          name_vacancy VARCHAR(255),
                                          url_vacancy VARCHAR(255),
                                          salary INTEGER,
@@ -61,14 +63,14 @@ class DBManager:
         self.cur.close()
         self.conn.close()
 
-    def add_data_employers_to_database(self, employers: list) -> None:
+    def add_data_employers_to_database(self, employer: dict) -> None:
         """Функция для записи данных в таблицы"""
         self.connect_to_database()
         self.conn.autocommit = True
-        for employer in employers:
-            self.cur.execute("""INSERT INTO employers (employer, description, employer_area, vacancy_count, site_url)
-                    VALUES (%s, %s, %s, %s, %s)""",
-                             (employer.get('name'),
+        self.cur.execute("""INSERT INTO employers (employer_id, employer, description, employer_area, vacancy_count, site_url)
+                    VALUES (%s, %s, %s, %s, %s, %s)""",
+                             (employer.get('employer_id'),
+                              employer.get('name'),
                               employer.get('description'),
                               employer.get('area'),
                               employer.get('vacancy_count'),
@@ -78,14 +80,14 @@ class DBManager:
         self.cur.close()
         self.conn.close()
 
-    def add_data_vacancies_to_database(self, vacancies: list) -> None:
+    def add_data_vacancies_to_database(self, vacancy: dict) -> None:
         """Метод для добавления вакансиий компаний в таблицу"""
         self.connect_to_database()
         self.conn.autocommit = True
-        for vacancy in vacancies:
-            self.cur.execute("""INSERT INTO vacancies (employer, name_vacancy, url_vacancy, salary, experience)
-                             VALUES (%s, %s, %s, %s, %s)""",
-                             (vacancy.get('employer'),
+        self.cur.execute("""INSERT INTO vacancies (vacancy_id, employer, name_vacancy, url_vacancy, salary, experience)
+                             VALUES (%s, %s, %s, %s, %s, %s)""",
+                             (vacancy.get('id'),
+                              vacancy.get('employer'),
                               vacancy.get('name'),
                               vacancy.get('url'),
                               vacancy.get('salary'),
