@@ -37,20 +37,23 @@ class HHSearchClass:
 
     def get_vacancies_from_employer(self) -> list:
         """Функция для получения вакансий компании"""
-        url = 'https://api.hh.ru/vacancies?employer_id='
-        params = {'per_page': 30}
-        data_vacancies = json.loads(requests.get(url + str(self.employer_id),
-                                                 params).content.decode())['items']
         data_vacancies_filtered = []
-        for vacancy in data_vacancies:
-            vacancy_id = vacancy.get('id')
-            employer_name = vacancy.get('employer').get('name')
-            name_vacancy = vacancy.get('name')
-            url_vacancy = vacancy.get('alternate_url')
-            salary_vacancy = vacancy.get("salary")
+        url = 'https://api.hh.ru/vacancies?employer_id='
+        params = {"per_page": 30}
+        response = json.loads(requests.get(url + str(self.employer_id), params).content.decode())['items']
+        for res in response:
+            vacancy_id = res.get('id')
+            employer_name = res.get('employer').get('name')
+            name_vacancy = res.get('name')
+            url_vacancy = res.get('alternate_url')
+            salary_vacancy = res.get("salary")
             if salary_vacancy is None:
                 salary_vacancy = 0
-            experience_vacancy = vacancy.get('experience').get('name')
+            else:
+                salary_vacancy = res.get("salary").get("from")
+                if salary_vacancy is None:
+                    salary_vacancy = 0
+            experience_vacancy = res.get('experience').get('name')
             filtered_vacancy = {'id': vacancy_id,
                                 'employer': employer_name,
                                 'name': name_vacancy,
@@ -59,4 +62,4 @@ class HHSearchClass:
                                 'experience': experience_vacancy,
                                 }
             data_vacancies_filtered.append(filtered_vacancy)
-        return data_vacancies_filtered
+        print(data_vacancies_filtered)
