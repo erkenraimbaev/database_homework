@@ -125,7 +125,7 @@ class DBManager:
         self.conn.autocommit = True
         with self.conn.cursor() as cur:
             cur.execute(f"""
-                        SELECT *FROM vacancies
+                        SELECT * FROM vacancies
                             """)
             data = cur.fetchall()
 
@@ -157,7 +157,7 @@ class DBManager:
         self.conn.autocommit = True
         with self.conn.cursor() as cur:
             cur.execute(f"""
-                            SELECT *FROM vacancies
+                            SELECT * FROM vacancies
                             WHERE salary > (SELECT AVG(salary) FROM vacancies)
                             """)
             data = cur.fetchall()
@@ -174,8 +174,8 @@ class DBManager:
         self.conn.autocommit = True
         with self.conn.cursor() as cur:
             cur.execute(f"""
-                            SELECT *FROM vacancies
-                            WHERE employer LIKE '{keyword}'
+                            SELECT * FROM vacancies
+                            WHERE name_vacancy LIKE '%{keyword}%'
                                     """)
             data = cur.fetchall()
 
